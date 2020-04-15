@@ -588,6 +588,23 @@ where
 	tx::cancel_tx(&mut **w, keychain_mask, &parent_key_id, tx_id, tx_slate_id)
 }
 
+pub fn delete_tx<'a, L, C, K>(
+	wallet_inst: Arc<Mutex<Box<dyn WalletInst<'a, L, C, K>>>>,
+	keychain_mask: Option<&SecretKey>,
+	status_send_channel: &Option<Sender<StatusMessage>>,
+	tx_id: Option<u32>,
+	tx_slate_id: Option<Uuid>,
+) -> Result<(), Error>
+where
+	L: WalletLCProvider<'a, C, K>,
+	C: NodeClient + 'a,
+	K: Keychain + 'a,
+{
+	wallet_lock!(wallet_inst, w);
+	let parent_key_id = w.parent_key_id();
+	tx::delete_tx(&mut **w, keychain_mask, &parent_key_id, tx_id, tx_slate_id)
+}
+
 /// get stored tx
 pub fn get_stored_tx<'a, T: ?Sized, C, K>(
 	w: &T,

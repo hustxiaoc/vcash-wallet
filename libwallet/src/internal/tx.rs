@@ -410,6 +410,55 @@ where
 	return Err(ErrorKind::TransactionDoesntExist(tx_id_string))?;
 }
 
+
+pub fn delete_tx<'a, T: ?Sized, C, K>(
+	wallet: &mut T,
+	keychain_mask: Option<&SecretKey>,
+	parent_key_id: &Identifier,
+	tx_id: Option<u32>,
+	tx_slate_id: Option<Uuid>,
+) -> Result<(), Error>
+where
+	T: WalletBackend<'a, C, K>,
+	C: NodeClient + 'a,
+	K: Keychain + 'a,
+{
+	let mut tx_id_string = String::new();
+	if let Some(tx_id) = tx_id {
+		tx_id_string = tx_id.to_string();
+	} else if let Some(tx_slate_id) = tx_slate_id {
+		tx_id_string = tx_slate_id.to_string();
+	}
+	let tx_vec = updater::retrieve_txs(wallet, tx_id, tx_slate_id, Some(&parent_key_id), false)?;
+	if tx_vec.len() == 1 {
+		let tx = tx_vec[0].clone();
+
+		updater::delete_tx(wallet, keychain_mask, tx, parent_key_id)?;
+		return Ok(());
+	}
+
+	let token_tx_vec =
+		updater::retrieve_token_txs(wallet, tx_id, tx_slate_id, Some(&parent_key_id), false)?;
+	if token_tx_vec.len() == 1 {
+		let tx = token_tx_vec[0].clone();
+
+		// updater::cancel_token_tx_and_outputs(
+		// 	wallet,
+		// 	keychain_mask,
+		// 	tx,
+		// 	outputs,
+		// 	token_outputs,
+		// 	parent_key_id,
+		// )?;
+
+		updater::delete_tx(wallet, keychain_mask, tx, parent_key_id)?;
+
+		return Ok(());
+	}
+
+	return Err(ErrorKind::TransactionDoesntExist(tx_id_string))?;
+}
+
 /// Update the stored transaction (this update needs to happen when the TX is finalised)
 pub fn update_stored_tx<'a, T: ?Sized, C, K>(
 	wallet: &mut T,

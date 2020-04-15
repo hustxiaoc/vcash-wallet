@@ -1224,6 +1224,25 @@ where
 		)
 	}
 
+	pub fn delete_tx(
+		&self,
+		keychain_mask: Option<&SecretKey>,
+		tx_id: Option<u32>,
+		tx_slate_id: Option<Uuid>,
+	) -> Result<(), Error> {
+		let tx = {
+			let t = self.status_tx.lock();
+			t.clone()
+		};
+		owner::delete_tx(
+			self.wallet_inst.clone(),
+			keychain_mask,
+			&tx,
+			tx_id,
+			tx_slate_id,
+		)
+	}
+
 	/// Retrieves the stored transaction associated with a TxLogEntry. Can be used even after the
 	/// transaction has completed.
 	///

@@ -1037,6 +1037,14 @@ pub trait OwnerRpcS {
 		tx_slate_id: Option<Uuid>,
 	) -> Result<(), ErrorKind>;
 
+
+	fn delete_tx(
+		&self,
+		token: Token,
+		tx_id: Option<u32>,
+		tx_slate_id: Option<Uuid>,
+	) -> Result<(), ErrorKind>;
+
 	/**
 	Networked version of [Owner::get_stored_tx](struct.Owner.html#method.get_stored_tx).
 
@@ -1902,6 +1910,16 @@ where
 		tx_slate_id: Option<Uuid>,
 	) -> Result<(), ErrorKind> {
 		Owner::cancel_tx(self, (&token.keychain_mask).as_ref(), tx_id, tx_slate_id)
+			.map_err(|e| e.kind())
+	}
+
+	fn delete_tx(
+		&self,
+		token: Token,
+		tx_id: Option<u32>,
+		tx_slate_id: Option<Uuid>,
+	) -> Result<(), ErrorKind> {
+		Owner::delete_tx(self, (&token.keychain_mask).as_ref(), tx_id, tx_slate_id)
 			.map_err(|e| e.kind())
 	}
 
