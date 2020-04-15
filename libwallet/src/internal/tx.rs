@@ -432,7 +432,6 @@ where
 	let tx_vec = updater::retrieve_txs(wallet, tx_id, tx_slate_id, Some(&parent_key_id), false)?;
 	if tx_vec.len() == 1 {
 		let tx = tx_vec[0].clone();
-
 		updater::delete_tx(wallet, keychain_mask, tx, parent_key_id)?;
 		return Ok(());
 	}

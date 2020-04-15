@@ -308,6 +308,8 @@ where
 	/// save a tx log entry
 	fn save_tx_log_entry(&mut self, t: TxLogEntry, parent_id: &Identifier) -> Result<(), Error>;
 
+	fn delete_tx_log_entry(&mut self, t: TxLogEntry, parent_id: &Identifier) -> Result<(), Error>;
+
 	/// Iterate over tx log data stored by the backend
 	fn token_tx_log_iter(&self) -> Box<dyn Iterator<Item = TokenTxLogEntry>>;
 
