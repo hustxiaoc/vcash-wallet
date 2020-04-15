@@ -436,26 +436,6 @@ where
 		updater::delete_tx(wallet, keychain_mask, tx, parent_key_id)?;
 		return Ok(());
 	}
-
-	let token_tx_vec =
-		updater::retrieve_token_txs(wallet, tx_id, tx_slate_id, Some(&parent_key_id), false)?;
-	if token_tx_vec.len() == 1 {
-		let tx = token_tx_vec[0].clone();
-
-		// updater::cancel_token_tx_and_outputs(
-		// 	wallet,
-		// 	keychain_mask,
-		// 	tx,
-		// 	outputs,
-		// 	token_outputs,
-		// 	parent_key_id,
-		// )?;
-
-		updater::delete_tx(wallet, keychain_mask, tx, parent_key_id)?;
-
-		return Ok(());
-	}
-
 	return Err(ErrorKind::TransactionDoesntExist(tx_id_string))?;
 }
 
